@@ -1,10 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, Users, Calendar, FileText } from "lucide-react";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 
 const Landing = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
+
   const features = [
     {
       icon: MessageSquare,
@@ -46,12 +57,12 @@ const Landing = () => {
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link to="/register">
               <Button variant="hero" size="xl">
-                Get Started Free
+                Sign Up Free
               </Button>
             </Link>
-            <Link to="/chat">
+            <Link to="/login">
               <Button variant="outline" size="xl">
-                Try Demo Chat
+                Login
               </Button>
             </Link>
           </div>
@@ -91,11 +102,18 @@ const Landing = () => {
           <p className="mb-8 text-lg text-muted-foreground">
             Join thousands of users who trust HealthConnect to find the right care.
           </p>
-          <Link to="/register">
-            <Button variant="hero" size="xl">
-              Start Your Journey
-            </Button>
-          </Link>
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <Link to="/register">
+              <Button variant="hero" size="xl">
+                Sign Up Now
+              </Button>
+            </Link>
+            <Link to="/login">
+              <Button variant="outline" size="xl">
+                Login
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
