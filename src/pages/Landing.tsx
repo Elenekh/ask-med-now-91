@@ -90,7 +90,7 @@ const Landing = () => {
             Ready to Take Control of Your Health?
           </h2>
           <p className="mb-8 text-lg text-muted-foreground">
-            Join thousands of users who trust HealthConnect to find the right care.
+            Join thousands of users who trust Med-AI to find the right care.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link to="/register">
