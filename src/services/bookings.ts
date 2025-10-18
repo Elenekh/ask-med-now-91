@@ -31,6 +31,59 @@ export const bookingsService = {
   },
 
   async getDoctorBookings(): Promise<Booking[]> {
+    // Mock data for testing
+    if (!import.meta.env.VITE_API_URL) {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const nextWeek = new Date(today);
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      
+      return [
+        {
+          id: '1',
+          doctorId: 'doctor-1',
+          doctorName: 'Dr. Sarah Johnson',
+          doctorSpecialty: 'Cardiology',
+          patientId: 'patient-1',
+          patientName: 'John Smith',
+          date: tomorrow.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          time: '10:00 AM',
+          location: 'City Medical Center - Room 305',
+          status: 'upcoming',
+          fee: 150,
+          paymentStatus: 'paid',
+        },
+        {
+          id: '2',
+          doctorId: 'doctor-1',
+          doctorName: 'Dr. Sarah Johnson',
+          doctorSpecialty: 'Cardiology',
+          patientId: 'patient-2',
+          patientName: 'Emily Davis',
+          date: tomorrow.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          time: '2:30 PM',
+          location: 'City Medical Center - Room 305',
+          status: 'upcoming',
+          fee: 150,
+          paymentStatus: 'pending',
+        },
+        {
+          id: '3',
+          doctorId: 'doctor-1',
+          doctorName: 'Dr. Sarah Johnson',
+          doctorSpecialty: 'Cardiology',
+          patientId: 'patient-3',
+          patientName: 'Michael Brown',
+          date: nextWeek.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          time: '11:15 AM',
+          location: 'City Medical Center - Room 305',
+          status: 'upcoming',
+          fee: 150,
+          paymentStatus: 'paid',
+        },
+      ];
+    }
     return api.get('/doctor/bookings');
   },
 

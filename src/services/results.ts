@@ -77,6 +77,43 @@ export const resultsService = {
   },
 
   async getDoctorPatients(): Promise<TestResult[]> {
+    // Mock data for testing
+    if (!import.meta.env.VITE_API_URL) {
+      return [
+        {
+          id: '1',
+          patientId: 'patient-1',
+          patientName: 'John Smith',
+          fileName: 'Blood Test Results - January 2024.pdf',
+          fileUrl: '#',
+          uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: '2',
+          patientId: 'patient-2',
+          patientName: 'Emily Davis',
+          fileName: 'Chest X-Ray - February 2024.pdf',
+          fileUrl: '#',
+          uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: '3',
+          patientId: 'patient-3',
+          patientName: 'Michael Brown',
+          fileName: 'MRI Scan Report - January 2024.pdf',
+          fileUrl: '#',
+          uploadedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: '4',
+          patientId: 'patient-4',
+          patientName: 'Sarah Wilson',
+          fileName: 'Annual Physical Examination - December 2023.pdf',
+          fileUrl: '#',
+          uploadedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+    }
     return api.get('/doctor/patients');
   },
 
