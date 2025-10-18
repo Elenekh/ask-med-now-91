@@ -22,15 +22,19 @@ const Login = () => {
     
     try {
       await login(email, password);
+      const storedUser = localStorage.getItem("auth_user");
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      
       toast({
         title: "Welcome back!",
         description: "You've successfully logged in.",
       });
-      navigate("/dashboard");
-    } catch (error) {
+      
+      navigate(user?.role === 'doctor' ? "/doctor/dashboard" : "/dashboard");
+    } catch (error: any) {
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
     } finally {
