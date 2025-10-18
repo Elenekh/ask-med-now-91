@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./hooks/useAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -12,6 +14,7 @@ import Doctors from "./pages/Doctors";
 import DoctorDetails from "./pages/DoctorDetails";
 import Booking from "./pages/Booking";
 import Insurance from "./pages/Insurance";
+import ClinicDetails from "./pages/ClinicDetails";
 import Results from "./pages/Results";
 import NotFound from "./pages/NotFound";
 
@@ -23,20 +26,23 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/doctors" element={<Doctors />} />
-          <Route path="/doctor/:id" element={<DoctorDetails />} />
-          <Route path="/booking/:id" element={<Booking />} />
-          <Route path="/insurance" element={<Insurance />} />
-          <Route path="/results" element={<Results />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+            <Route path="/doctors" element={<ProtectedRoute><Doctors /></ProtectedRoute>} />
+            <Route path="/doctor/:id" element={<ProtectedRoute><DoctorDetails /></ProtectedRoute>} />
+            <Route path="/booking/:id" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
+            <Route path="/insurance" element={<ProtectedRoute><Insurance /></ProtectedRoute>} />
+            <Route path="/clinic/:clinicId" element={<ProtectedRoute><ClinicDetails /></ProtectedRoute>} />
+            <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

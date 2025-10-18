@@ -6,9 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Heart } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,10 +23,26 @@ const Register = () => {
     insurance: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Register:", formData);
-    navigate("/dashboard");
+    setIsLoading(true);
+    
+    try {
+      await register(formData);
+      toast({
+        title: "Account created!",
+        description: "Welcome to HealthConnect.",
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const updateField = (field: string, value: string) => {
@@ -120,8 +141,8 @@ const Register = () => {
             </Select>
           </div>
 
-          <Button type="submit" variant="hero" className="w-full">
-            Create Account
+          <Button type="submit" variant="hero" className="w-full" disabled={isLoading}>
+            {isLoading ? "Creating account..." : "Create Account"}
           </Button>
         </form>
 

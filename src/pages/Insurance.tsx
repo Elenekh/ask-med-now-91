@@ -2,28 +2,34 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Building2, CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
 const Insurance = () => {
+  const navigate = useNavigate();
   const [selectedInsurance, setSelectedInsurance] = useState("");
 
   const insuranceProviders = [
     {
+      id: "clinic-1",
       name: "Blue Cross Blue Shield",
       doctors: 234,
       clinics: 45,
     },
     {
+      id: "clinic-2",
       name: "Aetna",
       doctors: 198,
       clinics: 38,
     },
     {
+      id: "clinic-3",
       name: "United Healthcare",
       doctors: 276,
       clinics: 52,
     },
     {
+      id: "clinic-4",
       name: "Cigna",
       doctors: 167,
       clinics: 31,
@@ -60,7 +66,11 @@ const Insurance = () => {
 
         <div className="grid gap-6 md:grid-cols-2">
           {insuranceProviders.map((provider) => (
-            <Card key={provider.name} className="bg-gradient-card p-6 shadow-card transition-smooth hover:shadow-elevated">
+            <Card 
+              key={provider.id} 
+              className="cursor-pointer bg-gradient-card p-6 shadow-card transition-smooth hover:shadow-elevated"
+              onClick={() => navigate(`/clinic/${provider.id}`)}
+            >
               <div className="mb-4 flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-hero shadow-soft">
                   <Building2 className="h-6 w-6 text-primary-foreground" />
