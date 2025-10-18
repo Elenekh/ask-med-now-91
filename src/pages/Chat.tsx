@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -9,9 +10,11 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  suggestions?: string[];
 }
 
 const Chat = () => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -38,7 +41,8 @@ const Chat = () => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Based on your symptoms, I recommend consulting with a General Practitioner or Primary Care Physician. Would you like me to show you available doctors?",
+        content: "Based on your symptoms, I recommend consulting with the following specialists:",
+        suggestions: ["Cardiologist", "Dermatologist", "General Practitioner"],
       };
       setMessages((prev) => [...prev, aiMessage]);
     }, 1000);
@@ -74,6 +78,21 @@ const Chat = () => {
                   }`}
                 >
                   {message.content}
+                  {message.suggestions && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {message.suggestions.map((suggestion) => (
+                        <Button
+                          key={suggestion}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate("/doctors")}
+                          className="bg-background hover:bg-accent"
+                        >
+                          {suggestion}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {message.role === "user" && (
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shadow-soft">

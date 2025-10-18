@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, MapPin, Calendar } from "lucide-react";
+import { Star, MapPin } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 interface Doctor {
@@ -46,6 +47,7 @@ const mockDoctors: Doctor[] = [
 ];
 
 const Doctors = () => {
+  const navigate = useNavigate();
   const [insuranceFilter, setInsuranceFilter] = useState("all");
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
 
@@ -127,9 +129,12 @@ const Doctors = () => {
                 </div>
               </div>
 
-              <Button variant="hero" className="w-full">
-                <Calendar className="mr-2 h-4 w-4" />
-                Book Appointment
+              <Button 
+                variant="hero" 
+                className="w-full"
+                onClick={() => navigate(`/doctor/${doctor.id}`)}
+              >
+                View Details
               </Button>
             </Card>
           ))}
