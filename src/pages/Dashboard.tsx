@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { MessageSquare, Users, FileText, Calendar } from "lucide-react";
+import { MessageSquare, Users, FileText, Calendar, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
@@ -34,6 +34,13 @@ const Dashboard = () => {
       icon: Calendar,
       path: "/appointments",
       gradient: "from-accent/80 to-accent/60",
+    },
+    {
+      title: "Doctor's Feedback",
+      description: "View responses and prescriptions from your doctors",
+      icon: MessageCircle,
+      path: "/feedback",
+      gradient: "from-primary/70 to-primary/50",
     },
   ];
 
