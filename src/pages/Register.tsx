@@ -5,22 +5,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart } from "lucide-react";
+import { Heart, UserCircle, Stethoscope } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { RegisterData } from "@/services/auth";
 
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterData>({
     name: "",
     email: "",
     password: "",
+    role: "patient",
     age: "",
     gender: "",
     insurance: "",
+    specialty: "",
+    clinic: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,13 +35,13 @@ const Register = () => {
       await register(formData);
       toast({
         title: "Account created!",
-        description: "Welcome to HealthConnect.",
+        description: `Welcome, ${formData.role === 'doctor' ? 'Dr.' : ''} ${formData.name}!`,
       });
-      navigate("/dashboard");
-    } catch (error) {
+      navigate(formData.role === 'doctor' ? '/doctor/dashboard' : '/dashboard');
+    } catch (error: any) {
       toast({
         title: "Registration failed",
-        description: "Please try again.",
+        description: error.message || "Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -45,7 +49,7 @@ const Register = () => {
     }
   };
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: keyof RegisterData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -61,6 +65,29 @@ const Register = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="role">I am a</Label>
+            <Select value={formData.role} onValueChange={(value) => updateField("role", value as 'doctor' | 'patient')}>
+              <SelectTrigger id="role">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover">
+                <SelectItem value="patient">
+                  <div className="flex items-center gap-2">
+                    <UserCircle className="h-4 w-4" />
+                    <span>Patient</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="doctor">
+                  <div className="flex items-center gap-2">
+                    <Stethoscope className="h-4 w-4" />
+                    <span>Doctor</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
             <Input
@@ -124,22 +151,47 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="insurance">Insurance Provider</Label>
-            <Select value={formData.insurance} onValueChange={(value) => updateField("insurance", value)}>
-              <SelectTrigger id="insurance">
-                <SelectValue placeholder="Select your insurance" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                <SelectItem value="blue-cross">Blue Cross Blue Shield</SelectItem>
-                <SelectItem value="aetna">Aetna</SelectItem>
-                <SelectItem value="united">United Healthcare</SelectItem>
-                <SelectItem value="cigna">Cigna</SelectItem>
-                <SelectItem value="kaiser">Kaiser Permanente</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {formData.role === 'patient' && (
+            <div className="space-y-2">
+              <Label htmlFor="insurance">Insurance Provider</Label>
+              <Select value={formData.insurance} onValueChange={(value) => updateField("insurance", value)}>
+                <SelectTrigger id="insurance">
+                  <SelectValue placeholder="Select your insurance" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover">
+                  <SelectItem value="blue-cross">Blue Cross Blue Shield</SelectItem>
+                  <SelectItem value="aetna">Aetna</SelectItem>
+                  <SelectItem value="united">United Healthcare</SelectItem>
+                  <SelectItem value="cigna">Cigna</SelectItem>
+                  <SelectItem value="kaiser">Kaiser Permanente</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {formData.role === 'doctor' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="specialty">Specialty</Label>
+                <Input
+                  id="specialty"
+                  placeholder="Cardiologist, Dermatologist, etc."
+                  value={formData.specialty}
+                  onChange={(e) => updateField("specialty", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="clinic">Clinic/Hospital</Label>
+                <Input
+                  id="clinic"
+                  placeholder="Medical Center Name"
+                  value={formData.clinic}
+                  onChange={(e) => updateField("clinic", e.target.value)}
+                />
+              </div>
+            </>
+          )}
 
           <Button type="submit" variant="hero" className="w-full" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Create Account"}

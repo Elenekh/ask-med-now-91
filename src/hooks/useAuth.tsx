@@ -1,19 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  age: string;
-  gender: string;
-  insurance: string;
-}
+import { authService, User, RegisterData } from "@/services/auth";
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (userData: Omit<User, "id"> & { password: string }) => Promise<void>;
-  logout: () => void;
+  register: (userData: RegisterData) => Promise<void>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -23,43 +15,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Check localStorage for existing session
     const storedUser = localStorage.getItem("auth_user");
-    if (storedUser) {
+    const token = localStorage.getItem("auth_token");
+    if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Mock login - replace with your Python backend API call
-    const mockUser: User = {
-      id: "user-" + Date.now(),
-      name: "User Name",
-      email,
-      age: "30",
-      gender: "other",
-      insurance: "blue-cross",
-    };
-    
-    localStorage.setItem("auth_user", JSON.stringify(mockUser));
-    setUser(mockUser);
+    const { user, token } = await authService.login(email, password);
+    localStorage.setItem("auth_user", JSON.stringify(user));
+    localStorage.setItem("auth_token", token);
+    setUser(user);
   };
 
-  const register = async (userData: Omit<User, "id"> & { password: string }) => {
-    // Mock registration - replace with your Python backend API call
-    const { password, ...userDataWithoutPassword } = userData;
-    const newUser: User = {
-      id: "user-" + Date.now(),
-      ...userDataWithoutPassword,
-    };
-    
-    localStorage.setItem("auth_user", JSON.stringify(newUser));
-    setUser(newUser);
+  const register = async (userData: RegisterData) => {
+    const { user, token } = await authService.register(userData);
+    localStorage.setItem("auth_user", JSON.stringify(user));
+    localStorage.setItem("auth_token", token);
+    setUser(user);
   };
 
-  const logout = () => {
-    localStorage.removeItem("auth_user");
-    setUser(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem("auth_user");
+      localStorage.removeItem("auth_token");
+      setUser(null);
+    }
   };
 
   return (
