@@ -7,6 +7,9 @@ export interface TestResult {
   fileName: string;
   fileUrl: string;
   uploadedAt: string;
+  prescribingDoctorId?: string;
+  prescribingDoctorName?: string;
+  sentToDoctorAt?: string;
   doctorResponse?: {
     notes: string;
     prescription: string;

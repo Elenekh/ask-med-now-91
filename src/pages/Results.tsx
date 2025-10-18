@@ -1,28 +1,50 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Download, Info, ArrowLeft } from "lucide-react";
+import { Send, Bot, User, Download, Info, ArrowLeft, UserCheck, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { doctorsService, type Doctor } from "@/services/doctors";
+import { resultsService } from "@/services/results";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
+  showDoctorSend?: boolean;
 }
 
 const Results = () => {
   const navigate = useNavigate();
+  const { resultId } = useParams();
+  const { toast } = useToast();
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: "1",
       role: "assistant",
-      content: "I'm here to help you understand your test results. Feel free to ask any questions!",
+      content: "I'm here to help you understand your test results. Feel free to ask any questions! I can also help you send these results to your prescribing doctor for review.",
     },
   ]);
   const [chatInput, setChatInput] = useState("");
+  const [showDoctorSearch, setShowDoctorSearch] = useState(false);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
+  useEffect(() => {
+    loadDoctors();
+  }, []);
+
+  const loadDoctors = async () => {
+    try {
+      const allDoctors = await doctorsService.getAllDoctors();
+      setDoctors(allDoctors);
+    } catch (error) {
+      console.error("Error loading doctors:", error);
+    }
+  };
 
   const handleSendMessage = () => {
     if (!chatInput.trim()) return;
@@ -37,14 +59,63 @@ const Results = () => {
     setChatInput("");
 
     setTimeout(() => {
+      const lowerInput = chatInput.toLowerCase();
+      const shouldShowDoctorSend = 
+        lowerInput.includes("send") && 
+        (lowerInput.includes("doctor") || lowerInput.includes("results"));
+
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Based on your test results, everything appears to be within normal ranges. However, I recommend discussing any concerns with your doctor during your next visit.",
+        content: shouldShowDoctorSend 
+          ? "I can help you send these results to your prescribing doctor for review. Would you like to select a doctor to send these results to? Note that some doctors may charge for reviewing test results."
+          : "Based on your test results, everything appears to be within normal ranges. However, I recommend discussing any concerns with your doctor during your next visit.",
+        showDoctorSend: shouldShowDoctorSend,
       };
       setChatMessages((prev) => [...prev, aiMessage]);
     }, 1000);
   };
+
+  const handleSendToDoctor = async (doctorId: string) => {
+    if (!resultId) {
+      toast({
+        title: "Error",
+        description: "No result ID found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      await resultsService.sendResultsToDoctor(resultId, doctorId);
+      toast({
+        title: "Results Sent",
+        description: "Your test results have been sent to the doctor for review.",
+      });
+      setShowDoctorSearch(false);
+      
+      const confirmMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: "Great! I've sent your test results to the doctor. They will review them and get back to you with their feedback. You'll be notified once they respond.",
+      };
+      setChatMessages((prev) => [...prev, confirmMessage]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send results to doctor",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const filteredDoctors = doctors.filter((doctor) =>
+    doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,31 +172,80 @@ const Results = () => {
               
               <div className="mb-4 h-96 space-y-4 overflow-y-auto rounded-lg bg-muted/30 p-4">
                 {chatMessages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    {message.role === "assistant" && (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-hero shadow-soft">
-                        <Bot className="h-4 w-4 text-primary-foreground" />
-                      </div>
-                    )}
+                  <div key={message.id} className="space-y-2">
                     <div
-                      className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-background text-card-foreground"
-                      }`}
+                      className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
                     >
-                      {message.content}
+                      {message.role === "assistant" && (
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-hero shadow-soft">
+                          <Bot className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                      )}
+                      <div
+                        className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
+                          message.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-background text-card-foreground"
+                        }`}
+                      >
+                        {message.content}
+                      </div>
+                      {message.role === "user" && (
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shadow-soft">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                      )}
                     </div>
-                    {message.role === "user" && (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shadow-soft">
-                        <User className="h-4 w-4 text-muted-foreground" />
+                    {message.showDoctorSend && (
+                      <div className="ml-11">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowDoctorSearch(!showDoctorSearch)}
+                          className="gap-2"
+                        >
+                          <UserCheck className="h-4 w-4" />
+                          Select Doctor
+                        </Button>
                       </div>
                     )}
                   </div>
                 ))}
+
+                {showDoctorSearch && (
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Search className="h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search doctors by name or specialty..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="flex-1"
+                      />
+                    </div>
+                    <div className="max-h-64 space-y-2 overflow-y-auto">
+                      {filteredDoctors.length === 0 ? (
+                        <p className="text-center text-sm text-muted-foreground py-4">
+                          No doctors found
+                        </p>
+                      ) : (
+                        filteredDoctors.map((doctor) => (
+                          <Card
+                            key={doctor.id}
+                            className="p-3 hover:bg-accent/50 transition-colors cursor-pointer"
+                            onClick={() => handleSendToDoctor(doctor.id)}
+                          >
+                            <div className="space-y-1">
+                              <p className="font-medium text-sm">{doctor.name}</p>
+                              <p className="text-xs text-muted-foreground">{doctor.specialty}</p>
+                              <p className="text-xs text-muted-foreground">{doctor.clinic}</p>
+                            </div>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
