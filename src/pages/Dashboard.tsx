@@ -18,7 +18,7 @@ const Dashboard = () => {
       title: "Discover Doctors in Your Insurance",
       description: "Browse doctors covered by your insurance plan",
       icon: Users,
-      path: "/insurance",
+      path: "/doctors",
       gradient: "from-accent to-accent/80",
     },
     {
