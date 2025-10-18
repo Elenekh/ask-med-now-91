@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
-import { Calendar, Users, MessageSquare } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();
@@ -19,12 +19,6 @@ const DoctorDashboard = () => {
       icon: Users,
       path: "/doctor/patients",
     },
-    {
-      title: "Messages",
-      description: "Communicate with patients",
-      icon: MessageSquare,
-      path: "/doctor/messages",
-    },
   ];
 
   return (
@@ -36,7 +30,7 @@ const DoctorDashboard = () => {
           <p className="text-lg text-muted-foreground">Manage your practice</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {cards.map((card) => {
             const Icon = card.icon;
             return (
