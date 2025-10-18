@@ -11,6 +11,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
+  const isLandingPage = location.pathname === "/";
 
   const handleLogout = () => {
     logout();
@@ -38,21 +39,23 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-6 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm font-medium transition-smooth ${
-                  isActive(link.path)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
+          {!isLandingPage && (
+            <div className="hidden items-center gap-6 md:flex">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`text-sm font-medium transition-smooth ${
+                    isActive(link.path)
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Desktop Auth Buttons */}
           <div className="hidden items-center gap-3 md:flex">
@@ -91,7 +94,7 @@ const Navbar = () => {
         {mobileMenuOpen && (
           <div className="border-t border-border py-4 md:hidden">
             <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
+              {!isLandingPage && navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
