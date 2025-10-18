@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Download, Info } from "lucide-react";
+import { Send, Bot, User, Download, Info, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 interface ChatMessage {
@@ -12,6 +13,7 @@ interface ChatMessage {
 }
 
 const Results = () => {
+  const navigate = useNavigate();
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: "1",
@@ -49,6 +51,15 @@ const Results = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Dashboard
+        </Button>
+
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-foreground">Test Results</h1>
           <p className="text-muted-foreground">View and understand your medical test results with AI-powered explanations</p>

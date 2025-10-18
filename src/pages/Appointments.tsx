@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, User, Plus } from "lucide-react";
+import { Calendar, Clock, MapPin, User, Plus, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
@@ -59,6 +59,15 @@ const Appointments = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Dashboard
+        </Button>
+
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="mb-2 text-3xl font-bold text-foreground">My Appointments</h1>

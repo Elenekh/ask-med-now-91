@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 interface Message {
@@ -53,6 +53,15 @@ const Chat = () => {
       <Navbar />
       
       <div className="container mx-auto flex flex-1 flex-col px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="mb-6 self-start"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Dashboard
+        </Button>
+
         <div className="mb-6">
           <h1 className="mb-2 text-3xl font-bold text-foreground">AI Health Assistant</h1>
           <p className="text-muted-foreground">Describe your symptoms to get personalized doctor recommendations</p>

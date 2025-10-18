@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 interface Doctor {
@@ -56,6 +56,15 @@ const Doctors = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Dashboard
+        </Button>
+
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-foreground">Find Your Doctor</h1>
           <p className="text-muted-foreground">Browse and book appointments with qualified specialists</p>
