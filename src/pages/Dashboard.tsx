@@ -19,28 +19,28 @@ const Dashboard = () => {
       description: "Browse doctors covered by your insurance plan",
       icon: Users,
       path: "/doctors",
-      gradient: "from-accent to-accent/80",
+      gradient: "from-primary to-primary/80",
     },
     {
       title: "View Test Results",
       description: "Access and understand your medical test results",
       icon: FileText,
       path: "/results",
-      gradient: "from-primary/80 to-primary/60",
+      gradient: "from-primary to-primary/80",
     },
     {
       title: "My Appointments",
       description: "View and manage your upcoming appointments",
       icon: Calendar,
       path: "/appointments",
-      gradient: "from-accent/80 to-accent/60",
+      gradient: "from-primary to-primary/80",
     },
     {
       title: "Doctor's Feedback",
       description: "View responses and prescriptions from your doctors",
       icon: MessageCircle,
       path: "/feedback",
-      gradient: "from-primary/70 to-primary/50",
+      gradient: "from-primary to-primary/80",
     },
   ];
 
