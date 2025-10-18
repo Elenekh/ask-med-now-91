@@ -30,7 +30,25 @@ export interface LoginResponse {
 }
 
 // Mock data for testing without backend
-const mockUsers: User[] = [];
+const mockUsers: User[] = [
+  {
+    id: 'doctor-1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@test.com',
+    role: 'doctor',
+    specialty: 'Cardiology',
+    clinic: 'City Medical Center',
+  },
+  {
+    id: 'patient-1',
+    name: 'John Smith',
+    email: 'patient@test.com',
+    role: 'patient',
+    age: '35',
+    gender: 'male',
+    insurance: 'blue-cross',
+  },
+];
 
 const useMockData = !import.meta.env.VITE_API_URL;
 
@@ -49,18 +67,22 @@ export const authService = {
 
   async login(email: string, password: string): Promise<LoginResponse> {
     if (useMockData) {
-      const user = mockUsers.find(u => u.email === email) || {
-        id: 'mock-user-' + Date.now(),
-        name: 'Demo User',
-        email,
-        role: 'patient' as const,
-        age: '30',
-        gender: 'other',
-        insurance: 'blue-cross',
-      };
-      if (!mockUsers.find(u => u.email === email)) {
+      let user = mockUsers.find(u => u.email === email);
+      
+      if (!user) {
+        // Create new user if not found (for testing)
+        user = {
+          id: 'mock-user-' + Date.now(),
+          name: 'Demo User',
+          email,
+          role: 'patient' as const,
+          age: '30',
+          gender: 'other',
+          insurance: 'blue-cross',
+        };
         mockUsers.push(user);
       }
+      
       return { user, token: 'mock-token-' + user.id };
     }
     return api.post('/login', { email, password }, { requiresAuth: false });
