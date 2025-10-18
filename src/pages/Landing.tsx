@@ -1,20 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, Users, Calendar, FileText } from "lucide-react";
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 
 const Landing = () => {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
 
   const features = [
     {
