@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, MapPin, ArrowLeft } from "lucide-react";
+import { Star, MapPin, ArrowLeft, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 interface Doctor {
@@ -50,6 +51,14 @@ const Doctors = () => {
   const navigate = useNavigate();
   const [insuranceFilter, setInsuranceFilter] = useState("all");
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredDoctors = mockDoctors.filter(doctor => {
+    const matchesSearch = searchQuery === "" || 
+      doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,6 +77,19 @@ const Doctors = () => {
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-foreground">Find Your Doctor</h1>
           <p className="text-muted-foreground">Browse and book appointments with qualified specialists</p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by doctor name or specialty..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         {/* Filters */}
@@ -108,7 +130,7 @@ const Doctors = () => {
 
         {/* Doctors List */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {mockDoctors.map((doctor) => (
+          {filteredDoctors.map((doctor) => (
             <Card key={doctor.id} className="bg-gradient-card p-6 shadow-card transition-smooth hover:shadow-elevated">
               <div className="mb-4">
                 <h3 className="mb-1 text-xl font-semibold text-card-foreground">{doctor.name}</h3>
