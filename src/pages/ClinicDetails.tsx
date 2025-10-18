@@ -83,26 +83,29 @@ const ClinicDetails = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {doctors.map((doctor) => (
             <Card key={doctor.id} className="overflow-hidden bg-gradient-card shadow-card transition-smooth hover:shadow-elevated">
-              <div className="aspect-square overflow-hidden">
+              <div className="flex gap-4 p-4">
                 <img
                   src={doctor.image}
                   alt={doctor.name}
-                  className="h-full w-full object-cover transition-smooth hover:scale-105"
+                  className="h-20 w-20 rounded-lg object-cover"
                 />
-              </div>
-              <div className="p-6">
-                <h3 className="mb-1 text-xl font-semibold text-card-foreground">{doctor.name}</h3>
-                <p className="mb-3 text-sm text-primary">{doctor.specialty}</p>
-                
-                <div className="mb-4 flex items-center gap-2">
-                  <Star className="h-4 w-4 fill-warning text-warning" />
-                  <span className="font-semibold text-card-foreground">{doctor.rating}</span>
-                  <span className="text-sm text-muted-foreground">({doctor.reviews} reviews)</span>
+                <div className="flex-1">
+                  <h3 className="mb-1 text-lg font-semibold text-card-foreground">{doctor.name}</h3>
+                  <p className="mb-2 text-sm text-primary">{doctor.specialty}</p>
+                  
+                  <div className="flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-warning text-warning" />
+                    <span className="text-sm font-semibold text-card-foreground">{doctor.rating}</span>
+                    <span className="text-xs text-muted-foreground">({doctor.reviews})</span>
+                  </div>
                 </div>
-
+              </div>
+              
+              <div className="px-4 pb-4">
                 <Button 
                   onClick={() => navigate(`/doctor/${doctor.id}`)} 
                   variant="outline" 
+                  size="sm"
                   className="w-full"
                 >
                   View Details
