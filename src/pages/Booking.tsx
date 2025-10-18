@@ -25,7 +25,7 @@ const Booking = () => {
     }
     
     toast.success("Appointment booked successfully!");
-    setTimeout(() => navigate("/dashboard"), 1500);
+    setTimeout(() => navigate("/appointments"), 1500);
   };
 
   return (

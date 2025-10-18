@@ -32,7 +32,7 @@ const Dashboard = () => {
       title: "My Appointments",
       description: "View and manage your upcoming appointments",
       icon: Calendar,
-      path: "/doctors",
+      path: "/appointments",
       gradient: "from-accent/80 to-accent/60",
     },
   ];
